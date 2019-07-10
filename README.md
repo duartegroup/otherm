@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/196029227.svg)](https://zenodo.org/badge/latestdoi/196029227)
 ![alt text](common/llogo.png)
 
 _A tool to calculate thermodynamic contributions from ORCA with full control_
