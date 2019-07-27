@@ -23,7 +23,7 @@ class Constants:
         'S': 32.065, 'Cl': 35.453, 'K': 39.0983, 'Ar': 39.948, 'Ca': 40.078, 'Sc': 44.9559, 'Ti': 47.867,
         'V': 50.9415, 'Cr': 51.9961, 'Mn': 54.938, 'Fe': 55.845, 'Ni': 58.6934, 'Co': 58.9332, 'Cu': 63.546,
         'Zn': 65.39, 'Ga': 69.723, 'Ge': 72.64, 'As': 74.9216, 'Se': 78.96, 'Br': 79.904, 'Kr': 83.8, 'I': 126.9045,
-        'Re': 186.207, 'Os': 190.23, 'Ir': 192.217, 'Pt': 195.078, 'Au': 196.9665
+        'Re': 186.207, 'Os': 190.23, 'Ir': 192.217, 'Pt': 195.078, 'Au': 196.9665, 'Pd': 106.42
     }
 
 
@@ -55,6 +55,8 @@ def get_args():
                              " Default: %(default)s")
     parser.add_argument('-sn', '--symn', type=int, default=None,
                         help="Override the symmetry number calculation. Default: %(default)s")
+    parser.add_argument('-r', '--real_freqs', action='store_true', default=False,
+                        help='Convert any imaginary frequencies to their real counterparts')
 
     return parser.parse_args()
 
@@ -77,6 +79,8 @@ def print_output(molecule):
     print("{:<50s}{:>33s}".format('Filename', molecule.filename))
     print("{:<50s}{:>33.1f}".format('Temperature (K)', molecule.temp))
     print("{:<50s}{:>33s}".format('Standard state is', '1 M' if molecule.sol else '1 atm'))
+    if molecule.real_freqs:
+        print("{:<50s}{:>33s}".format('Treat imaginary (negative) frequencies as real', 'True'))
     print("{:<50s}{:>33s}".format('Calculating using the method of',
                                   'IGM' if molecule.igm else 'Truhlar' if molecule.truhlar else 'Grimme'))
     if molecule.grimme:
@@ -804,11 +808,12 @@ def calc_internal_energy(molecule):
 
 class Molecule(object):
 
-    def __init__(self, filename, temp, ss, method, shift, w0, alpha, calc_sym, symmn):
+    def __init__(self, filename, temp, ss, method, shift, w0, alpha, calc_sym, symmn, real_freqs):
 
         self.filename = filename
         self.name = self.filename[:-4]                                      # Strip the .out extension from the filename
         self.temp = temp                                                    # K
+        self.real_freqs = real_freqs
 
         self.sol = True if ss == '1M' else False
         self.gas = True if ss == '1atm' else False
@@ -825,6 +830,8 @@ class Molecule(object):
         ensure_freq_calc(self.keywords)
         self.freqs = extract_freqs(self.filename)                           # cm-1
         self.excess_imag_freqs = get_excess_imag_freqs(self.freqs, self.keywords)
+        if real_freqs:
+            self.freqs = [np.abs(freq) for freq in self.freqs]
 
         self.mass = extract_mass(self.filename)                             # AMU
         self.mass_kg = self.mass * Constants.amu_to_kg                      # kg
@@ -861,5 +868,5 @@ if __name__ == '__main__':
 
     args = get_args()
     mol = Molecule(args.filename, args.temp, args.standard_state, args.method,
-                   args.shift, args.w0, args.alpha, args.calc_sym, args.symn)
+                   args.shift, args.w0, args.alpha, args.calc_sym, args.symn, args.real_freqs)
     print_output(mol)
