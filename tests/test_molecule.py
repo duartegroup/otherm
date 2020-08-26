@@ -45,6 +45,10 @@ def test_methane():
     # Total mass of methane is ~16 amu
     assert np.abs(methane.mass - otherm.Constants.amu_to_kg * 16.04) < 1E-3
 
+    # Ensure the pcoords have the correct shape
+    pcoords = methane.pcoords()
+    assert pcoords.shape == (2, 5, 3)
+
 
 def test_bad_molecule():
 

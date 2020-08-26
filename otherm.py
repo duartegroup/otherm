@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import numpy as np
-from copy import deepcopy
+from scipy.spatial import distance_matrix
 
 
 class Constants:
@@ -270,10 +270,10 @@ def is_linear(coords, cos_angle_tol=0.05):
         return True
 
     if len(coords) > 2:
-        vec_atom0_atom1 = calc_normalised_vector(coords[0], coords[1])
+        vec_atom0_atom1 = normalised_vector(coords[0], coords[1])
         is_atom_colinear = [False for _ in range(2, len(coords))]
         for i in range(2, len(coords)):
-            vec_atom0_atomi = calc_normalised_vector(coords[0], coords[i])
+            vec_atom0_atomi = normalised_vector(coords[0], coords[i])
             if 1.0 - cos_angle_tol < np.abs(np.dot(vec_atom0_atom1, vec_atom0_atomi)) < 1.0:
                 is_atom_colinear[i - 2] = True
 
@@ -283,44 +283,15 @@ def is_linear(coords, cos_angle_tol=0.05):
     return False
 
 
-def calc_normalised_vector(coord1, coord2):
+def normalised_vector(coord1, coord2):
     vec = coord2 - coord1
     return vec / np.linalg.norm(vec)
 
 
-def is_same_structure(old_coords, new_coords, xyzs, dist_tol):
-    """
-    Determine whether a the new structure maps onto the old, i.e is the same structure under some symmetry operation
-
-    :param old_coords:
-    :param new_coords:
-    :param xyzs:
-    :param dist_tol:
-    :return:
-    """
-
-    n_atoms = len(xyzs)
-    close_pairs = []
-
-    for j in range(n_atoms):
-        for k in range(n_atoms):
-            if xyzs[j][0] == xyzs[k][0]:
-                if np.linalg.norm(new_coords[j] - old_coords[k]) < dist_tol:
-                    close_pairs.append([j, k])
-
-        if len(close_pairs) != j + 1:                       # If atom j doesn't map then we can break immediately
-            return False
-
-    if len(close_pairs) == n_atoms:
-        return True
-
-    return False
-
-
 def strip_identical_and_inv_axes(axes, sim_axis_tol):
     """
-    For a list of axes remove those which are similar to within some distance tolerance, or are inverses to within
-    that tolerance
+    For a list of axes remove those which are similar to within some distance
+    tolerance, or are inverses to within that tolerance
 
     :param axes: list of axes
     :param sim_axis_tol: distance tolerance in Å
@@ -364,18 +335,18 @@ def get_possible_axes(coords, max_triple_dist=2.0, sim_axis_tol=0.05):
     for i in range(n_atoms):
         for j in range(n_atoms):
 
-            if i > j:                   # For the unique pairs add the i–j vector
-                possible_axes.append(calc_normalised_vector(coords[i], coords[j]))
+            if i > j:            # For the unique pairs add the i–j vector
+                possible_axes.append(normalised_vector(coords[i], coords[j]))
 
             for k in range(n_atoms):
                 if i != j and i != k and j != k:
                     vec1 = coords[j] - coords[i]
                     vec2 = coords[k] - coords[i]
                     if np.linalg.norm(vec1) < max_triple_dist and np.linalg.norm(vec2) < max_triple_dist:
-                            avg_vec = (vec1 + vec2) / 2.0
-                            possible_axes.append(avg_vec/np.linalg.norm(avg_vec))
-                            perp_vec = np.cross(vec1, vec2)
-                            possible_axes.append(perp_vec/np.linalg.norm(perp_vec))
+                        avg_vec = (vec1 + vec2) / 2.0
+                        possible_axes.append(avg_vec/np.linalg.norm(avg_vec))
+                        perp_vec = np.cross(vec1, vec2)
+                        possible_axes.append(perp_vec/np.linalg.norm(perp_vec))
 
     unique_possible_axes = strip_identical_and_inv_axes(possible_axes, sim_axis_tol)
 
@@ -395,38 +366,84 @@ def apply_n_fold_rotation(coords, axis, n):
 
     tmp_coords = np.array(coords, copy=True)
     rot_mat = rotation_matrix(axis, theta=(2.0 * np.pi / n))
-    return np.array([np.matmul(rot_mat, coord) for coord in tmp_coords])
+    # Apply the rotation to all rows in the coordinate matrix
+    return rot_mat.dot(tmp_coords.T).T
 
 
-def find_highest_cn(coords, xyzs, max_n, dist_tol):
+def is_same_under_n_fold(pcoords, axis, n, m=1, tol=0.2,
+                         excluded_pcoords=None):
+    """
+    Does applying an n-fold rotation about an axis generate the same structure
+    back again?
+
+    :param pcoords: (np.ndarray) shape = (n_unique_atom_types, n_atoms, 3)
+    :param axis: (np.ndarray) shape = (3,)
+    :param n: (int) n-fold of this rotation
+    :param m: (int) Apply this n-fold rotation m times
+    :param tol: (float)
+    :param excluded_pcoords: (list)
+    :return: (bool)
+    """
+    n_unique, n_atoms, _ = pcoords.shape
+    rotated_coords = np.array(pcoords, copy=True)
+
+    rot_mat = rotation_matrix(axis, theta=(2.0 * np.pi * m / n))
+
+    for i in range(n_unique):
+
+        # Rotate these coordinates
+        rotated_coords[i] = rot_mat.dot(rotated_coords[i].T).T
+
+        dist_mat = distance_matrix(pcoords[i], rotated_coords[i])
+
+        # If all elements are identical then carry on with the next element
+        if np.linalg.norm(dist_mat) < tol:
+            continue
+
+        # If the RMS between the closest pairwise distance for each atom is
+        # above the threshold then these structures are not the same
+        if np.linalg.norm(np.min(dist_mat, axis=1)) > tol:
+            return False
+
+        if excluded_pcoords is not None:
+
+            # If these rotated coordinates are similar to those on the excluded
+            # list then these should not be considered identical
+            if any(np.linalg.norm(rotated_coords[i] - pcoords[i])
+                   < tol for pcoords in excluded_pcoords):
+                return False
+
+    # Add to a list of structures that have already been generated by rotations
+    if excluded_pcoords is not None:
+        excluded_pcoords.append(rotated_coords)
+
+    return True
+
+
+def cn_and_axes(molecule, max_n, dist_tol):
     """
     Find the highest symmetry rotation axis
 
-    :param coords:
-    :param xyzs:
+    :param molecule: (otherm.Molecule)
     :param max_n:
     :param dist_tol:
     :return:
     """
-    axes = get_possible_axes(coords)
+    axes = get_possible_axes(coords=molecule.coords())
+    pcoords = molecule.pcoords()
 
-    n_axes = [[] for _ in range(max_n+1)]
+    # Cn numbers and their associated axes
+    cn_assos_axes = {i: [] for i in range(2, max_n+1)}
 
     for axis in axes:
 
         # Minimum n-fold rotation is 2
         for n in range(2, max_n+1):
-            tmp_coords = apply_n_fold_rotation(coords, axis, n)
 
-            if is_same_structure(tmp_coords, coords, xyzs, dist_tol):
-                n_axes[n].append(axis)
+            if is_same_under_n_fold(pcoords, axis, n=n, tol=dist_tol):
+                cn_assos_axes[n].append(axis)
 
-    max_n, axes_max_n = 0, []
-    for n, axes in enumerate(n_axes):
-        if len(axes) > 0:
-            axes_max_n, max_n = axes, n
-
-    return max_n, axes_max_n
+    return cn_assos_axes
 
 
 def calc_symmetry_number(molecule, max_n_fold_rot_searched=6, dist_tol=0.2):
@@ -439,45 +456,45 @@ def calc_symmetry_number(molecule, max_n_fold_rot_searched=6, dist_tol=0.2):
     :param dist_tol:
     :return:
     """
-    symmetry_number = 1
-    coords = molecule.coords()
-
     # Ensure the origin is at the center of mass
     if np.max(molecule.com) > 0.1:
         molecule.shift_to_com()
 
-    max_n, axes = find_highest_cn(coords,
-                                  molecule.xyzs,
-                                  max_n_fold_rot_searched, dist_tol)
-    if max_n == 1:
-        # C1 symmetry → σ=1
+    # Get the highest Cn-fold rotation axis
+    cn_axes = cn_and_axes(molecule, max_n_fold_rot_searched, dist_tol)
+
+    # If there are no C2 or greater axes then this molecule is C1  → σ=1
+    if all(len(cn_axes[n]) == 0 for n in cn_axes.keys()):
         return 1
 
-    possible_axes = get_possible_axes(coords)
-    curr_symmetry_number = 1                          # Already has E symmetry
+    pcoords = molecule.pcoords()
+    sigma_r = 1                          # Already has E symmetry
+
+    added_pcoords = []
 
     # For every possible axis apply C2, C3...C_n_max rotations
-    for axis in possible_axes:
-        for n in range(2, max_n_fold_rot_searched+1):
+    for n, axes in cn_axes.items():
+        for axis in axes:
+            # Apply this rotation m times e.g. once for a C2 etc.
+            for m in range(n-1):
 
-            tmp_coords = apply_n_fold_rotation(coords, axis, n)
+                # If the structure is the same but and has *not* been generated
+                # by another rotation increment the symmetry number by 1
+                if is_same_under_n_fold(pcoords, axis, n=n, m=m+1,
+                                        tol=dist_tol,
+                                        excluded_pcoords=added_pcoords):
+                    sigma_r += 1
 
-            if is_same_structure(tmp_coords, coords, molecule.xyzs, dist_tol):
-                if n == 2:
-                    curr_symmetry_number += 1
-                if n > 2:
-                    curr_symmetry_number += 2
-
-    if curr_symmetry_number > symmetry_number:
-        symmetry_number = curr_symmetry_number
-
-    if is_linear(coords):          # If the molecule is linear the then the symmetry_number will be wrong... fix it here
-        if symmetry_number > 6:    # There are perpendicular C2s the point group is D∞h
+    if is_linear(coords=molecule.coords()):
+        # There are perpendicular C2s the point group is D∞h
+        if sigma_r > 6:
             return 2
-        else:                      # If not then C∞v and the symmetry number is 1
+
+        # If not then C∞v and the symmetry number is 1
+        else:
             return 1
 
-    return symmetry_number
+    return sigma_r
 
 
 def calc_moments_of_inertia(xyz_list):
@@ -841,6 +858,32 @@ class Molecule:
             com_vec += (1.0 / total_mass) * mass * r_vec
 
         return com_vec
+
+    def pcoords(self):
+        """
+        Return a tensor where the first dimension is the size of the number of
+        unique atom types in a molecule, the second, the atoms of that type
+        and the third the number of dimensions in the coordinate space (3)
+
+        :return: (np.ndarray) shape (n, m, 3)
+        """
+        atom_symbols = list(set(xyz[0] for xyz in self.xyzs))
+        n_symbols = len(atom_symbols)
+
+        pcoords = np.zeros(shape=(n_symbols, self.n_atoms, 3))
+
+        for i in range(n_symbols):
+            for j in range(self.n_atoms):
+
+                # Atom symbol needs to match the leading dimension
+                if self.xyzs[j][0] != atom_symbols[i]:
+                    continue
+
+                for k in range(3):
+                    # k + 1 as the first element is the atomic symbol
+                    pcoords[i, j, k] = self.xyzs[j][k+1]
+
+        return pcoords
 
     def coords(self):
         """Return a numpy array shape (n_atoms, 3) of (x,y,z) coordinates"""

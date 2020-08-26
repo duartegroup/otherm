@@ -251,23 +251,6 @@ Atom   8H    basis set group =>   2
 Atom   9H    basis set group =>   2
 Atom  10H    basis set group =>   2
 Atom  11H    basis set group =>   2
-[1598435138.114999] [ty2019:27258:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.120491] [ty2019:27255:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.129274] [ty2019:27257:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.129830] [ty2019:27259:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.132959] [ty2019:27261:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.133125] [ty2019:27260:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.133233] [ty2019:27256:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.133234] [ty2019:27262:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.142571] [ty2019:27257:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.143056] [ty2019:27259:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.146713] [ty2019:27255:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.150031] [ty2019:27261:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.150067] [ty2019:27258:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.150068] [ty2019:27262:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.152154] [ty2019:27260:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435138.152123] [ty2019:27256:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-
 
            ************************************************************
            *        Program running with 8 parallel MPI-processes     *
@@ -319,28 +302,10 @@ Timings:
  Cholesky decomposition of V             ...   0.002 sec (  0.000 min) =  1.1%
  Three index repulsion integral time     ...   0.000 sec (  0.000 min) =  0.0%
 
-[1598435139.319379] [ty2019:27295:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.328193] [ty2019:27297:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.328884] [ty2019:27299:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.329703] [ty2019:27296:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.330565] [ty2019:27298:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.330831] [ty2019:27301:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.331321] [ty2019:27302:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.331900] [ty2019:27300:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.339317] [ty2019:27297:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.339569] [ty2019:27299:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.339565] [ty2019:27295:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.339564] [ty2019:27301:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.339659] [ty2019:27296:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.339953] [ty2019:27300:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435139.340048] [ty2019:27302:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-
-
            ************************************************************
            *        Program running with 8 parallel MPI-processes     *
            *              working on a common directory               *
            ************************************************************
-[1598435139.342948] [ty2019:27298:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
 -------------------------------------------------------------------------------
                                  ORCA SCF
 -------------------------------------------------------------------------------
@@ -631,17 +596,11 @@ Integration weight cutoff        WCut        ...    1.0000e-14
 Grids for H and He will be reduced by one unit
 
 # of grid points (after initial pruning)     ...  57636 (   0.0 sec)
-[1598435143.397918] [ty2019:27297:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435143.399429] [ty2019:27299:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
 # of grid points (after weights+screening)   ...  53414 (   0.0 sec)
 nearest neighbour list constructed           ...    0.0 sec
 Grid point re-assignment to atoms done       ...    0.0 sec
 Grid point division into batches done        ...    0.1 sec
 Reduced shell lists constructed in    0.2 sec
-[1598435143.571923] [ty2019:27302:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435143.571880] [ty2019:27295:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435143.573274] [ty2019:27296:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-
 Total number of grid points                  ...    53414
 Total number of batches                      ...      838
 Average number of points per batch           ...       63
@@ -1173,25 +1132,6 @@ Rotational constants in MHz :  5919.890973  5684.846802  2899.994290
 x,y,z [a.u.] :    -0.000991     0.003968     0.000000 
 x,y,z [Debye]:    -0.002520     0.010087     0.000000 
 
- 
-[1598435145.058813] [ty2019:27346:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.060624] [ty2019:27347:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.060841] [ty2019:27342:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.063015] [ty2019:27345:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.063671] [ty2019:27349:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.063793] [ty2019:27343:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.064890] [ty2019:27344:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.064966] [ty2019:27348:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.073229] [ty2019:27347:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.073250] [ty2019:27343:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.073259] [ty2019:27345:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.073289] [ty2019:27349:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.073600] [ty2019:27348:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.073605] [ty2019:27344:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.073957] [ty2019:27342:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.074059] [ty2019:27346:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-
-
            ************************************************************
            *        Program running with 8 parallel MPI-processes     *
            *              working on a common directory               *
@@ -1224,14 +1164,7 @@ Forming right-hand sides of CP-SCF equations     ...
 ----------------------------------------------
 One electron integral derivatives                ... done   (      0.1 sec)
 Transforming the overlap derivative matrices     ... done   (      0.0 sec)
-[1598435145.633481] [ty2019:27348:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.634610] [ty2019:27349:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.634667] [ty2019:27342:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-Making the Q(x) pseudodensities                  ... [1598435145.637398] [ty2019:27343:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.637477] [ty2019:27344:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.639363] [ty2019:27345:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.639443] [ty2019:27346:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435145.641082] [ty2019:27347:0]            sys.c:618  UCX  ERROR shmget(size=6291456 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
+Making the Q(x) pseudodensities                  ...
 done   (      0.0 sec)
 Adding the E*S(x)*S(y) terms to the Hessian      ... done   (      0.0 sec)
 Calculating energy weighted overlap derivatives  ... done   (      0.0 sec)
@@ -1718,23 +1651,6 @@ Final Gibbs free enthalpy         ...   -231.73391105 Eh
 
 For completeness - the Gibbs free enthalpy minus the electronic energy
 G-E(el)                           ...      0.07471254 Eh     46.88 kcal/mol
-
-[1598435162.512356] [ty2019:27417:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.520605] [ty2019:27414:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.523325] [ty2019:27418:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.529983] [ty2019:27416:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.530372] [ty2019:27413:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.530472] [ty2019:27415:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.531009] [ty2019:27420:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.532138] [ty2019:27419:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xfb0) for mm_recv_desc failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.540728] [ty2019:27415:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.541063] [ty2019:27417:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.541065] [ty2019:27413:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.541100] [ty2019:27419:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.541186] [ty2019:27414:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.541485] [ty2019:27420:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.541597] [ty2019:27418:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
-[1598435162.549684] [ty2019:27416:0]            sys.c:618  UCX  ERROR shmget(size=2097152 flags=0xb80) for ucp_am_bufs failed: Operation not permitted, please check shared memory limits by 'ipcs -l'
 
 Timings for individual modules:
 
