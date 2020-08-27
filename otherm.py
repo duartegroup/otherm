@@ -10,6 +10,7 @@ class Constants:
     n_a = 6.022140857E23                # molecules mol-1
     ha_to_j = 4.359744650E-18           # J Ha-1
     ha_to_j_mol = ha_to_j * n_a         # J mol-1 Ha-1
+    j_to_kcal = 0.239006 * 1E-3         # kcal J-1
     atm_to_pa = 101325                  # Pa
     dm_to_m = 0.1                       # m
     amu_to_kg = 1.660539040E-27         # Kg
@@ -257,32 +258,6 @@ def rotation_matrix(axis, theta):
                      [2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
 
 
-def is_linear(coords, cos_angle_tol=0.05):
-    """
-    Determine if a molecule is linear
-
-    :param coords:
-    :param cos_angle_tol:
-    :return:
-    """
-
-    if len(coords) == 2:
-        return True
-
-    if len(coords) > 2:
-        vec_atom0_atom1 = normalised_vector(coords[0], coords[1])
-        is_atom_colinear = [False for _ in range(2, len(coords))]
-        for i in range(2, len(coords)):
-            vec_atom0_atomi = normalised_vector(coords[0], coords[i])
-            if 1.0 - cos_angle_tol < np.abs(np.dot(vec_atom0_atom1, vec_atom0_atomi)) < 1.0:
-                is_atom_colinear[i - 2] = True
-
-        if all(is_atom_colinear):
-            return True
-
-    return False
-
-
 def normalised_vector(coord1, coord2):
     vec = coord2 - coord1
     return vec / np.linalg.norm(vec)
@@ -353,24 +328,7 @@ def get_possible_axes(coords, max_triple_dist=2.0, sim_axis_tol=0.05):
     return unique_possible_axes
 
 
-def apply_n_fold_rotation(coords, axis, n):
-    """
-    This function will SHIFT the origin of the coordinates to (0.0, 0.0, 0.0)
-
-    :param coords:
-    :param origin:
-    :param axis:
-    :param n:
-    :return:
-    """
-
-    tmp_coords = np.array(coords, copy=True)
-    rot_mat = rotation_matrix(axis, theta=(2.0 * np.pi / n))
-    # Apply the rotation to all rows in the coordinate matrix
-    return rot_mat.dot(tmp_coords.T).T
-
-
-def is_same_under_n_fold(pcoords, axis, n, m=1, tol=0.2,
+def is_same_under_n_fold(pcoords, axis, n, m=1, tol=0.25,
                          excluded_pcoords=None):
     """
     Does applying an n-fold rotation about an axis generate the same structure
@@ -446,7 +404,7 @@ def cn_and_axes(molecule, max_n, dist_tol):
     return cn_assos_axes
 
 
-def calc_symmetry_number(molecule, max_n_fold_rot_searched=6, dist_tol=0.2):
+def calc_symmetry_number(molecule, max_n_fold_rot_searched=6, dist_tol=0.25):
     """
     Calculate the symmetry number of a molecule.
     Based on Theor Chem Account (2007) 118:813–826
@@ -485,7 +443,7 @@ def calc_symmetry_number(molecule, max_n_fold_rot_searched=6, dist_tol=0.2):
                                         excluded_pcoords=added_pcoords):
                     sigma_r += 1
 
-    if is_linear(coords=molecule.coords()):
+    if molecule.is_linear():
         # There are perpendicular C2s the point group is D∞h
         if sigma_r > 6:
             return 2
@@ -546,10 +504,10 @@ def calc_q_trans_igm(molecule, ss, temp):
     else:
         raise NotImplementedError
 
-    molecule.q_trans = ((2.0 * np.pi * molecule.mass * Constants.k_b * temp / Constants.h**2)**1.5 *
-                        effective_volume)
+    q_trans = ((2.0 * np.pi * molecule.mass * Constants.k_b * temp /
+                Constants.h**2)**1.5 * effective_volume)
 
-    return molecule.q_trans
+    return q_trans
 
 
 def calc_q_rot_igm(molecule, temp):
@@ -563,19 +521,15 @@ def calc_q_rot_igm(molecule, temp):
     """
 
     i_mat = calc_moments_of_inertia(molecule.xyzs)
-
-    omega_x = Constants.h**2 / (8.0 * np.pi**2 * Constants.k_b * i_mat[0, 0])
-    omega_y = Constants.h**2 / (8.0 * np.pi**2 * Constants.k_b * i_mat[1, 1])
-    omega_z = Constants.h**2 / (8.0 * np.pi**2 * Constants.k_b * i_mat[2, 2])
+    omega = Constants.h**2 / (8.0 * np.pi**2 * Constants.k_b * i_mat)
 
     if molecule.n_atoms == 1:
-        molecule.q_rot = 1
-        return molecule.q_rot
+        return 1
 
     else:
-        molecule.q_rot = (np.sqrt(np.pi)/molecule.sigma_r) * (temp**1.5 / np.sqrt(omega_x * omega_y * omega_z))
-
-    return molecule.q_rot
+        # Product of the diagonal elements
+        omega_prod = omega[0, 0] * omega[1, 1] * omega[2, 2]
+        return temp**1.5/molecule.sigma_r * np.sqrt(np.pi / omega_prod)
 
 
 def calc_q_vib_igm(molecule, temp):
@@ -625,7 +579,12 @@ def calc_s_rot_rr(molecule, temp):
         return 0
 
     q_rot = calc_q_rot_igm(molecule, temp=temp)
-    return Constants.r * (np.log(q_rot) + 1.5)
+
+    if molecule.is_linear():
+        return Constants.r * (np.log(q_rot) + 1.0)
+
+    else:
+        return Constants.r * (np.log(q_rot) + 1.5)
 
 
 def calc_igm_s_vib(molecule, temp):
@@ -772,10 +731,9 @@ def calc_internal_vib_energy(molecule, temp):
     e_vib = 0.0
 
     # Final 6 vibrational frequencies are translational/rotational
-    for freq in molecule.freqs[:-6]:
-        if freq > 0:
-            x = freq * Constants.c_in_cm * Constants.h / Constants.k_b
-            e_vib += Constants.r * x * (1.0 / (np.exp(x/temp) - 1.0))
+    for freq in molecule.real_vib_freqs():
+        x = freq * Constants.c_in_cm * Constants.h / Constants.k_b
+        e_vib += Constants.r * x * (1.0 / (np.exp(x/temp) - 1.0))
 
     return e_vib
 
@@ -792,7 +750,7 @@ def calc_internal_energy(molecule, temp):
     zpe = calc_zpe(molecule)
     e_trns = 1.5 * Constants.r * temp
 
-    if is_linear(molecule.coords()):
+    if molecule.is_linear():
         # Linear molecules only have two rotational degrees of freedom -> RT
         e_rot = Constants.r * temp
 
@@ -888,6 +846,34 @@ class Molecule:
     def coords(self):
         """Return a numpy array shape (n_atoms, 3) of (x,y,z) coordinates"""
         return np.array([np.array(line[1:4]) for line in self.xyzs])
+
+    def is_linear(self, cos_angle_tol=0.05):
+        """
+        Determine if a molecule is linear
+
+        :param cos_angle_tol:
+        :return:
+        """
+        coords = self.coords()
+
+        if len(coords) == 2:
+            return True
+
+        if len(coords) > 2:
+            vec_atom0_atom1 = normalised_vector(coords[0], coords[1])
+            is_atom_colinear = [False for _ in range(2, len(coords))]
+
+            for i in range(2, len(coords)):
+                vec_atom0_atomi = normalised_vector(coords[0], coords[i])
+
+                if 1.0 - cos_angle_tol < np.abs(
+                        np.dot(vec_atom0_atom1, vec_atom0_atomi)) < 1.0:
+                    is_atom_colinear[i - 2] = True
+
+            if all(is_atom_colinear):
+                return True
+
+        return False
 
     def calculate_thermochemistry(self, temp=298.15, ss='1M', method='grimme',
                                   shift=100, w0=100, alpha=4, calc_sym=True,

@@ -33,8 +33,9 @@ def test_methane_gaussian():
     methane.shift_to_com()
 
     expected_i_mat = np.array([[-0.34825, 0.18296, 0.91937],
-                                [0.67773, 0.72672, 0.11209],
-                                [0.64762, -0.66212, 0.37707]])
+                               [0.67773, 0.72672, 0.11209],
+                               [0.64762, -0.66212, 0.37707]])
+
     i_mat = otherm.calc_moments_of_inertia(methane.xyzs)
     assert np.sum(i_mat - expected_i_mat) < 1E-6
 
@@ -48,3 +49,17 @@ def test_methane_gaussian():
 
     # Slightly poorer agreement with Gaussian but still within 0.5 kJ mol-1
     assert np.abs(methane.g - expected_g) < 4
+
+
+def test_calc_ss():
+
+    methane_1atm = otherm.Molecule('methane.out')
+    methane_1atm.calculate_thermochemistry(ss='1atm')
+
+    methane_1m = otherm.Molecule('methane.out')
+    methane_1m.calculate_thermochemistry(ss='1M')
+
+    delta = methane_1m.g - methane_1atm.g
+    # Expected additive amount it 1.9 kcal mol-1
+
+    assert 1.8 < otherm.Constants.j_to_kcal * delta < 2

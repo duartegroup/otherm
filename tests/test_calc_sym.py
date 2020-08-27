@@ -2,7 +2,7 @@ from .. import otherm
 import numpy as np
 
 
-def test_same_under1():
+def test_same_under():
 
     methane = otherm.Molecule('methane.out')
     coords = methane.coords()
@@ -38,17 +38,11 @@ def test_same_under1():
                                        n=2)
 
 
-def test_is_same_under2():
-
-    benzene = otherm.Molecule('benzene.out')
-    # TODO: finish this test
-
-
 def test_highest_cn():
 
     methane = otherm.Molecule('methane.out')
 
-    cn_axes = otherm.cn_and_axes(methane, max_n=6, dist_tol=0.1)
+    cn_axes = otherm.cn_and_axes(methane, max_n=6, dist_tol=0.25)
     # 3 C2 axes
     assert len(cn_axes[2]) == 3
 
@@ -56,7 +50,7 @@ def test_highest_cn():
     assert len(cn_axes[3]) == 4
 
     benzene = otherm.Molecule('benzene.out')
-    n_c6 = len(otherm.cn_and_axes(benzene, max_n=8, dist_tol=0.2)[6])
+    n_c6 = len(otherm.cn_and_axes(benzene, max_n=8, dist_tol=0.25)[6])
     # benzene should have a single C6 axis
     assert n_c6 == 1
 
@@ -71,7 +65,7 @@ def test_symmetry_number():
 
     methane = otherm.Molecule('methane.out')
 
-    assert not otherm.is_linear(coords=methane.coords())
+    assert not methane.is_linear()
     assert otherm.calc_symmetry_number(methane, dist_tol=0.1) == 12
 
     benzene = otherm.Molecule('benzene.out')
