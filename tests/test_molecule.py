@@ -1,11 +1,15 @@
 from .. import otherm
 import pytest
 import numpy as np
+import os
+here = os.path.dirname(os.path.abspath(__file__))
+
+methane_path = os.path.join(here, 'data', 'methane.out')
 
 
 def test_methane():
 
-    methane = otherm.Molecule('methane.out')
+    methane = otherm.Molecule(methane_path)
 
     assert not methane.is_ts
     assert methane.n_atoms == 5

@@ -1,10 +1,14 @@
 from .. import otherm
 import numpy as np
+import os
+here = os.path.dirname(os.path.abspath(__file__))
+
+methane_path = os.path.join(here, 'data', 'methane.out')
 
 
 def test_methane():
 
-    methane = otherm.Molecule('methane.out')
+    methane = otherm.Molecule(methane_path)
 
     # ORCA 4.0 defaulted to sigma_r = 4 and 1 atmosphere standard state
     methane.calculate_thermochemistry(ss='1atm',
@@ -18,7 +22,7 @@ def test_methane():
 
 def test_methane_gaussian():
 
-    methane = otherm.Molecule('methane.out')
+    methane = otherm.Molecule(methane_path)
 
     # Populate parameters from a Gaussian09 calculation
     methane.freqs = (6 * [0.0] +
@@ -53,10 +57,10 @@ def test_methane_gaussian():
 
 def test_calc_ss():
 
-    methane_1atm = otherm.Molecule('methane.out')
+    methane_1atm = otherm.Molecule(methane_path)
     methane_1atm.calculate_thermochemistry(ss='1atm')
 
-    methane_1m = otherm.Molecule('methane.out')
+    methane_1m = otherm.Molecule(methane_path)
     methane_1m.calculate_thermochemistry(ss='1M')
 
     delta = methane_1m.g - methane_1atm.g
