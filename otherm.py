@@ -791,7 +791,7 @@ class Molecule:
         self.com = self.calculate_com()
         return None
 
-    def real_vib_freqs(self, make_real=False):
+    def real_vib_freqs(self):
         """Return the real (positive) vibrational frequencies"""
         # Vibrational frequencies are all but the 6 smallest (rotational +
         # translational) and also remove the largest imaginary frequency if
@@ -799,7 +799,7 @@ class Molecule:
         excluded_n = 7 if self.is_ts else 6
 
         # Frequencies are sorted high -> low(negative)
-        if make_real:
+        if self.real_freqs:
             return [np.abs(freq) for freq in self.freqs[:-excluded_n]]
 
         else:
@@ -890,7 +890,7 @@ class Molecule:
 
     def calculate_thermochemistry(self, temp=298.15, ss='1M', method='grimme',
                                   shift=100, w0=100, alpha=4, calc_sym=True,
-                                  symm_n=None, make_freqs_real=True):
+                                  symm_n=None):
         """
         Calculate thermochemical components and the energies U, H, S, G
 
@@ -914,9 +914,6 @@ class Molecule:
         :param calc_sym: (bool) Force the calculation of symmetry
 
         :param symm_n: (int) Override the calculated symmetry number
-
-        :param make_freqs_real: (bool) Convert all imaginary frequencies to
-                                their real (positive) analogues
         """
         assert len(self.freqs) == 3 * len(self.xyzs)
 
@@ -929,11 +926,6 @@ class Molecule:
         if symm_n:
             self.sigma_r = symm_n
 
-        # Convert all imaginary frequencies printed by ORCA as negative to real
-        # (so positive) values
-        if make_freqs_real:
-            self.freqs = [np.abs(freq) for freq in self.freqs]
-
         self.s = calc_entropy(self, method, temp, ss, shift, w0, alpha)
         self.u = calc_internal_energy(self, temp)
         self.h = self.u + Constants.r * temp
@@ -941,15 +933,19 @@ class Molecule:
 
         return None
 
-    def __init__(self, filename, is_ts=False):
+    def __init__(self, filename, is_ts=False, real_freqs=True):
         """
         Molecule initialised from an ORCA output file
 
         :param filename: (str)
+        :param is_ts: (bool) Is this species a TS? if so then exclude
         """
         # Is this molecule a transition state, and so should have one imaginary
-        # (negative frequency) that does not contribute to the energy?
+        # (negative frequency)
         self.is_ts = is_ts
+
+        # Should all non-TS frequencies be made real (positive)
+        self.real_freqs = real_freqs
 
         # Harmonic vibrational frequencies in cm-1
         self.freqs = extract_frequencies(filename)
@@ -983,7 +979,9 @@ class Molecule:
 if __name__ == '__main__':
 
     args = get_args()
-    mol = Molecule(args.filename, is_ts=args.transition_state)
+    mol = Molecule(args.filename,
+                   is_ts=args.transition_state,
+                   real_freqs=args.real_freqs)
 
     mol.calculate_thermochemistry(temp=args.temp,
                                   ss=args.standard_state,
@@ -992,6 +990,5 @@ if __name__ == '__main__':
                                   w0=args.w0,
                                   alpha=args.alpha,
                                   calc_sym=args.calc_sym,
-                                  symm_n=args.symn,
-                                  make_freqs_real=args.real_freqs)
+                                  symm_n=args.symn)
     print_output(mol)
